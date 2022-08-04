@@ -12,6 +12,7 @@ const defaultTodos = [
   { text: 'Probando',completed: false }  
 ]
  function App() {
+  //-----------Para filtrar los todos
   const [todos, setTodos] = React.useState(defaultTodos);
   const [searchValue, setSearchValue] = React.useState('');
 
@@ -29,6 +30,23 @@ const defaultTodos = [
       return todoText.includes(searchText);
     });
     
+  }
+  //-------Para completar todos
+  const completeTodo = (text) => {
+    const todoIndex = todos.findIndex(todo => todo.text === text);
+    //inyectando todos los todos que ya teniamos
+    const newTodos = [...todos];
+    newTodos[todoIndex].completed = true;
+    setTodos(newTodos);
+  }
+
+  //-------Para borrar todos
+  const deleteTodo = (text) => {
+    const todoIndex = todos.findIndex(todo => todo.text === text);
+    //inyectando todos los todos que ya teniamos
+    const newTodos = [...todos];
+    newTodos.splice(todoIndex, 1);
+    setTodos(newTodos);
   }
 
   return (
@@ -51,6 +69,9 @@ const defaultTodos = [
           key={todo.text} 
           text={todo.text}
           completed={todo.completed}
+          onComplete={() => completeTodo(todo.text)}
+          onDelete={() => deleteTodo(todo.text)}
+          
           />
         ))}
       </TodoList>}
