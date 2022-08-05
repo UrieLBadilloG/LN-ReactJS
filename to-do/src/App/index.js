@@ -1,58 +1,81 @@
-import React from "react";
-import { AppUI } from "./AppUI";
-const defaultTodos = [
-  { text: 'Cortar cebolla',completed: true },
-  { text: 'Tomar el curso de intro',completed: false },
-  { text: 'Llorar',completed: false },
-  { text: 'Probando',completed: false }  
-]
- function App() {
-  //-----------Para filtrar los todos
-  const [todos, setTodos] = React.useState(defaultTodos);
+import React from 'react';
+import { AppUI } from './AppUI';
+
+// const defaultTodos = [
+//   { text: 'Cortar cebolla', completed: true },
+//   { text: 'Tomar el cursso de intro a React', completed: false },
+//   { text: 'Llorar con la llorona', completed: true },
+//   { text: 'LALALALAA', completed: false },
+// ];
+
+function useLocalStorage(itemName, initialValue) {
+  const localStorageItem = localStorage.getItem(itemName);
+  let parsedItem;
+  
+  if (!localStorageItem) {
+    localStorage.setItem(itemName, JSON.stringify(initialValue));
+    parsedItem = initialValue;
+  } else {
+    parsedItem = JSON.parse(localStorageItem);
+  }
+
+  const [item, setItem] = React.useState(parsedItem);
+
+  const saveItem = (newItem) => {
+    const stringifiedItem = JSON.stringify(newItem);
+    localStorage.setItem(itemName, stringifiedItem);
+    setItem(newItem);
+  };
+
+  return [
+    item,
+    saveItem,
+  ];
+}
+
+function App() {
+  // Desestructuramos los datos que retornamos de nuestro custom hook, y le pasamos los argumentos que necesitamos (nombre y estado inicial)
+  const [todos, saveTodos] = useLocalStorage('TODOS_V1', []);
   const [searchValue, setSearchValue] = React.useState('');
 
-  //revisando cual de 'todo.completed' es true
   const completedTodos = todos.filter(todo => !!todo.completed).length;
-  const totalTodos = todos.length
+  const totalTodos = todos.length;
 
-  let serchedTodos = [];
-  if (!searchValue.length > 0) {
-    serchedTodos = todos;
-  }else{
-    serchedTodos = todos.filter(todo => {
+  let searchedTodos = [];
+
+  if (!searchValue.length >= 1) {
+    searchedTodos = todos;
+  } else {
+    searchedTodos = todos.filter(todo => {
       const todoText = todo.text.toLowerCase();
       const searchText = searchValue.toLowerCase();
       return todoText.includes(searchText);
     });
-    
   }
-  //-------Para completar todos
+
   const completeTodo = (text) => {
     const todoIndex = todos.findIndex(todo => todo.text === text);
-    //inyectando todos los todos que ya teniamos
     const newTodos = [...todos];
     newTodos[todoIndex].completed = true;
-    setTodos(newTodos);
-  }
+    saveTodos(newTodos);
+  };
 
-  //-------Para borrar todos
   const deleteTodo = (text) => {
     const todoIndex = todos.findIndex(todo => todo.text === text);
-    //inyectando todos los todos que ya teniamos
     const newTodos = [...todos];
     newTodos.splice(todoIndex, 1);
-    setTodos(newTodos);
-  }
-
+    saveTodos(newTodos);
+  };
+  
   return (
     <AppUI
-          totalTodos={totalTodos}
-          completedTodos={completedTodos}
-          searchValue={searchValue}
-          setSearchValue={setSearchValue}
-          serchedTodos={serchedTodos}
-          completeTodo={completeTodo}
-          deleteTodo={deleteTodo}
+      totalTodos={totalTodos}
+      completedTodos={completedTodos}
+      searchValue={searchValue}
+      setSearchValue={setSearchValue}
+      serchedTodos={searchedTodos}
+      completeTodo={completeTodo}
+      deleteTodo={deleteTodo}
     />
   );
 }
