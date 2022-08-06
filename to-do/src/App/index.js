@@ -66,6 +66,16 @@ function App() {
     newTodos.splice(todoIndex, 1);
     saveTodos(newTodos);
   };
+
+  console.log('Render antes del useEffect');
+
+  React.useEffect(() => {
+    console.log('Use effect');
+  });
+
+  console.log('Render despues del useEffect');
+
+
   
   return (
     <AppUI
