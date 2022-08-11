@@ -1,14 +1,16 @@
 import React from 'react';
-import ReactDOM from 'react-dom';    
-import './Modal.css'
+// Necesitamos ReactDOM para renderizar nuestro modal en el DOM
+import ReactDOM from 'react-dom';
+import './Modal.css';
 
-function Modal({ children }){
-    return ReactDOM.createPortal(
-        <div className="ModalBackground">
-            {children}
-        </div>,
-        document.getElementById('modal')
-    );
+function Modal({ children }) {
+  // ReactDom tiene este método para crear portales
+  return ReactDOM.createPortal(
+    <div className="ModalBackground">
+      {children}
+    </div>,
+    document.getElementById('modal')
+  );
 }
 
-export { Modal }
+export { Modal };
